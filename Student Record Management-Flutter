@@ -1,0 +1,143 @@
+import 'package:flutter/material.dart'; 
+
+void main() { 
+
+  runApp(StudentApp());} 
+
+class StudentApp extends StatelessWidget { 
+
+  @override 
+
+  Widget build(BuildContext context) { 
+
+    return MaterialApp( 
+
+      debugShowCheckedModeBanner: false, 
+
+      title: 'Student Management System', 
+
+      home: StudentHomePage(),);}} 
+
+class StudentHomePage extends StatefulWidget { 
+
+  @override 
+
+  _StudentHomePageState createState() => _StudentHomePageState();} 
+
+class _StudentHomePageState extends State<StudentHomePage> { 
+
+  final TextEditingController nameController = TextEditingController(); 
+
+  final TextEditingController rollController = TextEditingController(); 
+
+  List<Map<String, String>> students = []; 
+
+  void addStudent() { 
+
+    if (nameController.text.isNotEmpty && 
+
+        rollController.text.isNotEmpty) { 
+
+      setState(() { 
+
+        students.add({ 
+
+          'name': nameController.text, 
+
+          'roll': rollController.text, 
+
+        }); 
+
+      }); 
+
+      nameController.clear(); 
+
+      rollController.clear(); 
+
+    } 
+
+  } 
+
+  @override 
+
+  Widget build(BuildContext context) { 
+
+    return Scaffold( 
+
+      appBar: AppBar( 
+
+        title: Text('Student Management System'), 
+
+        centerTitle: true, 
+
+      ), 
+
+      body: Padding( 
+
+        padding: EdgeInsets.all(16), 
+
+        child: Column( 
+
+          children: [ 
+
+            TextField( 
+
+              controller: nameController, 
+
+              decoration: InputDecoration( 
+
+                labelText: 'Student Name', 
+
+                border: OutlineInputBorder(),),), 
+
+            SizedBox(height: 10), 
+
+            TextField( 
+
+              controller: rollController, 
+
+              decoration: InputDecoration( 
+
+                labelText: 'Roll Number', 
+
+                border: OutlineInputBorder(),),), 
+
+            SizedBox(height: 10), 
+
+            ElevatedButton( 
+
+              onPressed: addStudent, 
+
+              child: Text('Add Student'),), 
+
+            SizedBox(height: 20), 
+
+            Expanded( 
+
+              child: ListView.builder( 
+
+                itemCount: students.length, 
+
+                itemBuilder: (context, index) { 
+
+                  return Card( 
+
+                    color: Colors.lightBlue.shade100, // 👈 saved color 
+
+                    child: ListTile( 
+
+                      title: Text( 
+
+                        students[index]['name']!, 
+
+                        style: TextStyle( 
+
+                          fontWeight: FontWeight.bold, 
+
+                          color: Colors.blue.shade900,), 
+
+                      subtitle: Text( 
+
+                        'Roll No: ${students[index]['roll']}', 
+
+                        style: TextStyle(color: Colors.blueGrey),),),);},),),],),),);}} 
