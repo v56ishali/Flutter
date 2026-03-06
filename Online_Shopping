@@ -1,0 +1,266 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(LuxeCart());
+}
+
+class LuxeCart extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "LuxeCart",
+      theme: ThemeData(
+        fontFamily: "Poppins",
+        primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: Color(0xFFF5F7FA),
+      ),
+      home: ProductScreen(),
+    );
+  }
+}
+
+class Product {
+  final String name;
+  final double price;
+
+  Product(this.name, this.price);
+}
+
+class ProductScreen extends StatefulWidget {
+  @override
+  _ProductScreenState createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends State<ProductScreen> {
+  List<Product> products = [
+    Product("Premium Shirt", 999),
+    Product("Luxury Shoes", 1999),
+    Product("Smart Watch", 1499),
+    Product("Leather Bag", 899),
+  ];
+
+  Map<Product, int> cart = {};
+
+  double get totalPrice {
+    double total = 0;
+    cart.forEach((product, quantity) {
+      total += product.price * quantity;
+    });
+    return total;
+  }
+
+  void addToCart(Product product) {
+    setState(() {
+      if (cart.containsKey(product)) {
+        cart[product] = cart[product]! + 1;
+      } else {
+        cart[product] = 1;
+      }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("${product.name} added to cart"),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("LuxeCart"),
+        centerTitle: true,
+        elevation: 0,
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.shopping_bag_outlined),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CartScreen(cart: cart),
+                    ),
+                  );
+                },
+              ),
+              if (cart.isNotEmpty)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: CircleAvatar(
+                    radius: 8,
+                    backgroundColor: Colors.red,
+                    child: Text(
+                      cart.length.toString(),
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+
+      body: ListView.builder(
+        padding: EdgeInsets.all(16),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          final product = products[index];
+
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            margin: EdgeInsets.only(bottom: 12),
+            child: ListTile(
+              title: Text(product.name),
+              subtitle: Text("₹${product.price}"),
+              trailing: ElevatedButton(
+                onPressed: () => addToCart(product),
+                child: Text("Add"),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CartScreen extends StatelessWidget {
+  final Map<Product, int> cart;
+
+  CartScreen({required this.cart});
+
+  double get totalPrice {
+    double total = 0;
+    cart.forEach((product, quantity) {
+      total += product.price * quantity;
+    });
+    return total;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("My Cart"),
+        centerTitle: true,
+      ),
+
+      body: cart.isEmpty
+          ? Center(
+              child: Text(
+                "Your cart is empty 🛒",
+                style: TextStyle(fontSize: 18),
+              ),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.all(16),
+                    children: cart.entries.map((entry) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        margin: EdgeInsets.only(bottom: 12),
+                        child: ListTile(
+                          title: Text(entry.key.name),
+                          subtitle: Text("Quantity: ${entry.value}"),
+                          trailing: Text(
+                            "₹${(entry.key.price * entry.value).toStringAsFixed(0)}",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Total",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "₹${totalPrice.toStringAsFixed(0)}",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.indigo,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 15),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding:
+                                EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(30),
+                            ),
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(20),
+                                ),
+                                title: Text("Order Successful"),
+                                content: Text(
+                                    "Your order has been placed successfully!"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context),
+                                    child: Text("OK"),
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                          child: Text("Checkout"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
