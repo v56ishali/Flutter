@@ -1,0 +1,86 @@
+import 'package:flutter/material.dart'; 
+void main() => runApp(const TravelGuideApp()); 
+class TravelGuideApp extends StatelessWidget { 
+  const TravelGuideApp({super.key}); 
+  @override 
+  Widget build(BuildContext context) { 
+    return MaterialApp( 
+      debugShowCheckedModeBanner: false, 
+      theme: ThemeData( 
+        useMaterial3: true, 
+        colorScheme: ColorScheme.fromSeed( 
+          seedColor: const Color.fromARGB(255, 255, 34, 218), 
+          primary: Color.fromARGB(255, 231, 1, 252), 
+          secondary: Color.fromARGB(255, 0, 119, 255), 
+        ), 
+      ), 
+      home: const HomeScreen(), 
+    ); 
+  } 
+} 
+class HomeScreen extends StatefulWidget { 
+  const HomeScreen({super.key}); 
+  @override 
+  State<HomeScreen> createState() => _HomeScreenState(); 
+} 
+class _HomeScreenState extends State<HomeScreen> { 
+  int _currentIndex = 0; 
+  // Simplified pages list 
+  final List<Widget> _pages = const [ 
+    Center(child: Text(" Explore the World", style: TextStyle(fontSize: 22, fontWeight: 
+FontWeight.bold))), 
+    Center(child: Text(" Popular Places", style: TextStyle(fontSize: 22, fontWeight: 
+FontWeight.bold))), 
+    Center(child: Text(" My Adventure Profile", style: TextStyle(fontSize: 22, fontWeight: 
+FontWeight.bold))), 
+  ]; 
+  @override 
+  Widget build(BuildContext context) { 
+    return Scaffold( 
+      appBar: AppBar( 
+        title: const Text("Travel Guide", style: TextStyle(color: Colors.white)), 
+        centerTitle: true, 
+        backgroundColor: Theme.of(context).colorScheme.primary, 
+        iconTheme: const IconThemeData(color: Colors.white), 
+      ), 
+      drawer: Drawer( 
+        child: Column( 
+          children: [ 
+            const UserAccountsDrawerHeader( 
+              decoration: BoxDecoration(color: Color.fromARGB(255, 248, 1, 228)), 
+              accountName: Text("Traveler"), 
+              accountEmail: Text("avi195@travel.com"), 
+              currentAccountPicture: CircleAvatar(backgroundColor: Color.fromARGB(255, 1, 156, 
+245), child: Icon(Icons.person)), 
+            ), 
+            ListTile( 
+              leading: const Icon(Icons.sunny_snowing), 
+              title: const Text("My Trips"), 
+              onTap: () => Navigator.pop(context), 
+            ), 
+            ListTile( 
+              leading: const Icon(Icons.settings), 
+              title: const Text("Settings"), 
+              onTap: () => Navigator.pop(context), 
+            ), 
+          ], 
+        ), 
+      ), 
+      body: AnimatedSwitcher( 
+        duration: const Duration(milliseconds: 300), 
+        child: _pages[_currentIndex], 
+      ), 
+      bottomNavigationBar: BottomNavigationBar( 
+        currentIndex: _currentIndex, 
+        selectedItemColor: Color.fromARGB(255, 255, 0, 212), 
+        unselectedItemColor: Colors.grey, 
+        onTap: (index) => setState(() => _currentIndex = index), 
+        items: const [ 
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: "Home"), 
+          BottomNavigationBarItem(icon: Icon(Icons.location_on), label: "Destinations"), 
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"), 
+        ], 
+      ), 
+    ); 
+  } 
+}
