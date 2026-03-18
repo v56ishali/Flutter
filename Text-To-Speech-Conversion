@@ -1,0 +1,236 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_tts/flutter_tts.dart';
+
+void main() {
+
+runApp(const MyApp());
+
+}
+
+class MyApp extends StatelessWidget {
+
+const MyApp({super.key});
+
+@override
+
+Widget build(BuildContext context) {
+
+return const MaterialApp(
+
+debugShowCheckedModeBanner: false,
+
+home: TTSHome(),
+
+);
+
+}
+
+}
+
+class TTSHome extends StatefulWidget {
+
+const TTSHome({super.key});
+
+@override
+
+State<TTSHome> createState() => _TTSHomeState();
+
+}
+
+class _TTSHomeState extends State<TTSHome> {
+
+final FlutterTts flutterTts = FlutterTts();
+
+final TextEditingController controller = TextEditingController();
+
+double speechRate = 0.5;
+
+double volume = 1.0;
+
+double pitch = 1.0;
+
+Future speak() async {
+
+if (controller.text.isNotEmpty) {
+
+await flutterTts.setSpeechRate(speechRate);
+
+await flutterTts.setVolume(volume);
+
+await flutterTts.setPitch(pitch);
+
+await flutterTts.speak(controller.text);
+
+}
+
+}
+
+Future stop() async {
+
+await flutterTts.stop();
+
+}
+
+
+Future pause() async {
+
+await flutterTts.pause();
+
+}
+
+@override
+
+Widget build(BuildContext context) {
+
+return Scaffold(
+
+appBar: AppBar(
+
+title: const Text("Text-to-Speech App"),
+
+backgroundColor: Colors.blue,
+
+centerTitle: true,
+
+),
+
+body: Padding(
+
+padding: const EdgeInsets.all(16),
+
+child: Column(
+
+children: [
+
+TextField(
+
+controller: controller,
+
+maxLines: 3,
+
+decoration: const InputDecoration(
+
+border: OutlineInputBorder(),
+
+hintText: "Enter text to speak...",
+
+),
+
+),
+
+const SizedBox(height: 20),
+
+Text("Speech Rate: ${speechRate.toStringAsFixed(2)}"),
+
+Slider(
+
+value: speechRate,
+
+min: 0.1,
+
+max: 1.0,
+
+onChanged: (value) {
+
+setState(() {
+
+speechRate = value;
+
+});
+
+},
+
+),
+
+Text("Volume: ${volume.toStringAsFixed(2)}"),
+
+Slider(
+
+value: volume,
+
+min: 0.0,
+
+max: 1.0,
+
+onChanged: (value) {
+
+setState(() {
+
+volume = value;
+
+});
+
+},
+
+),
+
+Text("Pitch: ${pitch.toStringAsFixed(2)}"),
+
+Slider(
+
+value: pitch,
+
+min: 0.5,
+
+max: 2.0,
+
+onChanged: (value) {
+
+setState(() {
+
+pitch = value;
+
+});
+
+},
+
+),
+
+const SizedBox(height: 20),
+
+Row(
+
+mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+children: [
+
+ElevatedButton(
+
+onPressed: speak,
+
+child: const Text("Speak"),
+
+),
+
+ElevatedButton(
+
+onPressed: pause,
+
+child: const Text("Pause"),
+
+),
+
+ElevatedButton(
+
+onPressed: stop,
+
+child: const Text("Stop"),
+
+),
+
+],
+
+)
+
+],
+
+),
+
+),
+
+);
+
+}
+
+}
